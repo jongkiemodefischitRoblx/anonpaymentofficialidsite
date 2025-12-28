@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Pembayaran Berhasil</title>
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="box">
+    <img src="https://files.catbox.moe/1i7rv2.gif" alt="Success GIF" class="successGif">
+
+    <h2>Pembayaran Berhasil!</h2>
+
+    <div class="detail" id="detailTransaksi">
+       <b>Status:</b> <span style="color:#6dff99;">SUCCESS</span><br>
+       Invoice : <span id="inv"></span><br>
+       Nominal : Rp <span id="amt"></span><br>
+       Metode  : QRIS Auto<br>
+       Waktu   : <span id="time"></span>
+    </div>
+
+    <button id="waBtn">Chat CS & Kirim Bukti</button>
+</div>
+
+<script>
+const q = new URLSearchParams(location.search);
+const id = q.get("id");
+const amount = q.get("amount");
+
+document.getElementById("inv").innerText = id;
+document.getElementById("amt").innerText = amount;
+
+let now = new Date();
+document.getElementById("time").innerText =
+`${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} - ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+document.getElementById("waBtn").onclick = () => {
+    let message = encodeURIComponent(
+`Pembayaran Berhasil ✔
+Invoice : ${id}
+Nominal : Rp ${amount}
+Status  : SUCCESS`
+    );
+    window.location.href = `https://wa.me/60175953518?text=${message}`;
+}
+</script>
+</body>
+</html>

@@ -9,7 +9,6 @@
 
 <div class="box">
     <h2>Pembayaran QRIS</h2>
-
     <img id="qrimg" class="qr" alt="QRIS">
 
     <div class="detail">
@@ -25,16 +24,16 @@
 </div>
 
 <script>
-const SLUG = "anon-payment";
-const q = new URLSearchParams(location.search);
-const id = q.get("id"); 
-const amount = q.get("amount");
+const SLUG="anon-payment";
+const q=new URLSearchParams(location.search);
+const id=q.get("id");
+const amount=q.get("amount");
 
-document.getElementById("inv").innerText = id;
-document.getElementById("amt").innerText = amount;
+document.getElementById("inv").innerText=id;
+document.getElementById("amt").innerText=amount;
 
-// QRIS real-time
-document.getElementById("qrimg").src = `https://api.pakasir.com/${SLUG}/qris/${id}.png`;
+// Fetch QRIS via serverless proxy
+document.getElementById("qrimg").src=`/api/qris?id=${id}&slug=${SLUG}`;
 
 // Timer persistent
 const TIMER_KEY = `invoice_timer_${id}`;
@@ -43,36 +42,26 @@ if(!expireTime){ expireTime = Date.now() + 10*60*1000; localStorage.setItem(TIME
 
 function updateTimer(){
     const now = Date.now();
-    let t = Math.floor((expireTime - now)/1000);
-    if(t <= 0){
-        t=0;
-        document.getElementById("timer").innerText = "00:00";
-        clearInterval(timerInterval);
-        localStorage.removeItem(TIMER_KEY);
-        document.getElementById("sts").innerText="EXPIRED";
-        return;
-    }
-    let m=Math.floor(t/60), s=t%60;
-    document.getElementById("timer").innerText = `${m}:${s<10?'0'+s:s}`;
+    let t = Math.floor((expireTime-now)/1000);
+    if(t<=0){ t=0; document.getElementById("timer").innerText="00:00"; clearInterval(timerInterval); localStorage.removeItem(TIMER_KEY); document.getElementById("sts").innerText="EXPIRED"; return; }
+    let m=Math.floor(t/60),s=t%60;
+    document.getElementById("timer").innerText=`${m}:${s<10?'0'+s:s}`;
 }
-const timerInterval = setInterval(updateTimer,1000);
+const timerInterval=setInterval(updateTimer,1000);
 updateTimer();
 
 // Status auto-check via proxy
 async function checkStatus(){
     try{
-        const res = await fetch(`/api/status?id=${id}&slug=${SLUG}`);
-        const data = await res.json();
-        let status = data.status || "MEMPROSES";
+        const res=await fetch(`/api/status?id=${id}&slug=${SLUG}`);
+        const data=await res.json();
+        let status=data.status||"MEMPROSES";
         document.getElementById("sts").innerText=status;
         if(status==="PAID"||status==="SUCCESS"){
             localStorage.removeItem(TIMER_KEY);
-            window.location = `success.html?id=${id}&amount=${amount}`;
+            window.location=`success.html?id=${id}&amount=${amount}`;
         }
-    } catch(e){
-        console.error(e);
-        document.getElementById("sts").innerText="ERROR";
-    }
+    }catch(e){ console.error(e); document.getElementById("sts").innerText="ERROR"; }
 }
 setInterval(checkStatus,5000);
 </script>

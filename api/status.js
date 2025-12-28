@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
     const { id, slug } = req.query;
-    if(!id || !slug) return res.status(400).json({status:"ERROR", message:"Missing invoice id or slug"});
+    if(!id || !slug) return res.status(400).json({status:"ERROR", message:"Missing id or slug"});
 
     try {
         const response = await fetch(`https://api.pakasir.com/${slug}/qris/status?id=${id}`, {

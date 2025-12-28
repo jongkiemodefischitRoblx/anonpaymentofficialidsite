@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>AnonPayment</title>
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+<h1>Halo Selamat Datang Di <span>Website Pembayaran Anon</span></h1>
+
+<div class="container">
+    <input type="number" id="nominal" placeholder="Masukan Nominal...">
+    <button onclick="openPay()">Bayar Sekarang</button>
+
+    <div class="info">
+       Informasi Pembayaran:<br>
+       • Sistem otomatis 24 Jam<br>
+       • QRIS auto generate sesuai nominal<br>
+       • Bukti bayar wajib dikirim ke CS setelah success
+    </div>
+</div>
+
+<div id="pop" class="popup">
+    <div class="pop-box">
+        <h3>Pilih Metode</h3>
+        <button class="btn" onclick="pay('qris')">QRIS AUTO</button>
+        <button class="btn2" onclick="copyDana()">DANA (Copy Nomor)</button>
+        <button class="disable">OVO (Maintenance)</button>
+        <button class="disable">GOPAY (Maintenance)</button>
+        <br><button class="btn2" onclick="closePay()">Tutup</button>
+    </div>
+</div>
+
+<script>
+const NOMOR_DANA = "6283192227884";
+
+function openPay(){document.getElementById("pop").style.display="flex";}
+function closePay(){document.getElementById("pop").style.display="none";}
+
+function copyDana(){
+    navigator.clipboard.writeText(NOMOR_DANA);
+    alert("Nomor Dana dicopy!");
+}
+
+function pay(method){
+    let amount=document.getElementById("nominal").value;
+    if(!amount) return alert("Nominal wajib diisi!");
+    if(method=='qris'){
+        window.location = `invoice.html?id=${Date.now()}&amount=${amount}`;
+    }
+}
+</script>
+</body>
+</html>
